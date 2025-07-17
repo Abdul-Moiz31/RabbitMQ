@@ -7,11 +7,11 @@ async function receiveMail(){
         const channel = await connection.createChannel();
 
 
-        await channel.assertQueue("mail_queue",{durable:false});
+        await channel.assertQueue("mail_queue_user",{durable:false});
 
-        channel.consume("mail_queue",(message)=>{
+        channel.consume("mail_queue_user",(message)=>{
             if(message !== null){
-                console.log("Received message",JSON.parse(message.content));
+                console.log("Received message for user",JSON.parse(message.content));
                 channel.ack(message); // Acknowledge the message
             }
         });
