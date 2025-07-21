@@ -27,7 +27,7 @@ Suppose you have a direct exchange named `direct_logs` and three queues bound wi
 2. The direct exchange checks all bindings and routes the message to the queue(s) with a matching binding key.
 3. The consumer(s) receive and process the message from the queue.
 
-### Architecture Diagram
+### General Architecture Diagram
 ```mermaid
 graph LR
     Producer1["Producer"] -- "routing key: info" --> DirectExchange["Direct Exchange"]
@@ -39,6 +39,20 @@ graph LR
     QueueInfo --> ConsumerA["Consumer"]
     QueueWarning --> ConsumerB["Consumer"]
     QueueError --> ConsumerC["Consumer"]
+```
+
+---
+
+## Implementation Flow Diagram
+```mermaid
+graph TD
+    Producer["producer.js"] -- "Publishes message with routing key" --> DirectExchange["Direct Exchange"]
+    DirectExchange -- "routing key: info" --> QueueInfo["Queue (info)"]
+    DirectExchange -- "routing key: warning" --> QueueWarning["Queue (warning)"]
+    DirectExchange -- "routing key: error" --> QueueError["Queue (error)"]
+    QueueInfo --> InfoConsumer["infoConsumer.js: Receives & processes"]
+    QueueWarning --> WarningConsumer["warningConsumer.js: Receives & processes"]
+    QueueError --> ErrorConsumer["errorConsumer.js: Receives & processes"]
 ```
 
 ---
