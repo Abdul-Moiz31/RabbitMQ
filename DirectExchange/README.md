@@ -50,10 +50,29 @@ graph TD
     DirectExchange -- "routing key: info" --> QueueInfo["Queue (info)"]
     DirectExchange -- "routing key: warning" --> QueueWarning["Queue (warning)"]
     DirectExchange -- "routing key: error" --> QueueError["Queue (error)"]
-    QueueInfo --> InfoConsumer["infoConsumer.js: Receives & processes"]
-    QueueWarning --> WarningConsumer["warningConsumer.js: Receives & processes"]
-    QueueError --> ErrorConsumer["errorConsumer.js: Receives & processes"]
+    QueueInfo --> InfoConsumer["Normconsumer.js: Receives & processes"]
+    QueueWarning --> WarningConsumer["(e.g., another consumer)"]
+    QueueError --> ErrorConsumer["Subconsumer.js: Receives & processes"]
 ```
 
 ---
-This folder contains code examples demonstrating the use of a direct exchange in RabbitMQ. 
+
+## What Has Been Implemented in `/DirectExchange`
+
+This folder demonstrates a direct exchange pattern in RabbitMQ using Node.js. The following scripts are included and are thoroughly commented for clarity:
+
+- **producer.js**: Acts as the message producer. It connects to RabbitMQ, asserts a direct exchange, and publishes messages with specific routing keys (e.g., `info`, `warning`, `error`).
+
+- **Normconsumer.js**: Represents a consumer for the `info` queue. It connects to RabbitMQ, asserts the `mail_queue_user` queue, and listens for messages routed with the `info` key. Upon receiving a message, it processes and acknowledges it.
+
+- **Subconsumer.js**: Represents a consumer for the `error` queue. It connects to RabbitMQ, asserts the `mail_queue_subscriber` queue, and listens for messages routed with the `error` key. Upon receiving a message, it processes and acknowledges it.
+
+### How It Works Together
+1. The **producer** sends messages with different routing keys to the direct exchange.
+2. Each consumer script binds to its respective queue with a specific binding key (e.g., `info` or `error`).
+3. When a message is published, only the consumer whose queue binding key matches the message's routing key receives and processes the message.
+
+This setup demonstrates the selective routing capability of direct exchanges, where only the intended queue(s) receive a message, enabling targeted and efficient message delivery.
+
+---
+This folder contains code examples demonstrating the use of a direct exchange in RabbitMQ. All scripts are commented for easy understanding and learning. 
